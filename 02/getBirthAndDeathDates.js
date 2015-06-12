@@ -1,8 +1,10 @@
 //getBirthAndDeathDates.js
 
-//returns a key->value array with the keys birthDate and deathDate for the actor given as a string in "actorName" 
+//returns a key->value array with the keys birthDate and deathDate for the actor given as a string in "actorName"
 
-function getBirthAndDeathDates(actorName){
+function getBirthAndDeathDates(actor){
+
+  var actorName = actor.innerHTML;
 
 	var actorUri;
 	var url = "http://dbpedia.org/sparql";
@@ -16,15 +18,11 @@ function getBirthAndDeathDates(actorName){
 
 	var queryUrl = encodeURI(url + "?query=" + query + "&format=json");
 
-	console.log(query);
-	console.log(queryUrl);
-
 	$.ajax({
 		dataType: "jsonp",
 		url: queryUrl,
 		success: function(_data) {
 			actorUri = _data.results.bindings[0].s.value;
-			console.log(actorUri);
 
 			query = "\
 			prefix dbpedia2: <http://dbpedia.org/property/>\
@@ -37,10 +35,7 @@ function getBirthAndDeathDates(actorName){
 				dataType: "jsonp",
 				url: queryUrl,
 				success: function(_data) {
-
 					if (_data.results.bindings[0].o !== undefined) {
-						actorName += "born on: ";
-						actorName += _data.results.bindings[0].o.value;
 						results["birthDate"]=_data.results.bindings[0].o.value;
 					}
 					query = "\
@@ -55,22 +50,16 @@ function getBirthAndDeathDates(actorName){
 						dataType: "jsonp",
 						url: queryUrl,
 						success: function(_data) {
-							console.log(_data.results.bindings[0].o);
-							if (_data.results.bindings[0].o !== undefined) {
-								actorName += " and died on: "
-								actorName += _data.results.bindings[0].o.value;
-								results["deathDate"]=_data.results.bindings[0].o.value;
-							}
-							console.log(actorName);
-							console.log(results);
-							return results;
 
+							if (_data.results.bindings.length !== 0) {
+								if (_data.results.bindings[0].o !== undefined) {
+									results["deathDate"]=_data.results.bindings[0].o.value;
+									actor.innerHTML += " | 👶" + results["birthDate"] + " - 💀" + results["deathDate"];
+								}
 						}
-					});
-				}
+            }});
+          }
 			});
 		}
 	});
 }
-
-console.log(getBirthAndDeathDates("Heath Ledger"));
