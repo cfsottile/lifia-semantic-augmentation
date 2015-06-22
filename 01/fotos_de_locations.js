@@ -1,21 +1,39 @@
+// hardcoding methods - start
+
+function hardcodedLocations () {
+    return [
+        "Bletchley Park",
+        "Sherborne School",
+        "Joyce Grove"
+    ];
+}
+
+// hardcoding methods - ends
+
 function defaultEndpoint() {
     return "http://dbpedia.org/sparql";
 }
 
 // returns array with results
-function performQuery(query, endpoint) {
+function performQuery(query, callback, endpoint) {
     // endpoint = endpoint !== undefined ? endpoint : defaultEndpoint();
     endpoint = endpoint || defaultEndpoint();
+    queryUrl = encodeURI(endpoint + "?query=" + query + "&format=json");
 
-    // must be implemented, of course
+    $.ajax({
+		dataType: "jsonp",
+		url: queryUrl,
+		success: function(_data) {
+            callback(_data);
+        }
 
-    return [ "http://commons.wikimedia.org/wiki/Special:FilePath/Bletchley_Park_-_Draco2008.jpg?width=300" ];
+    // return [ "http://commons.wikimedia.org/wiki/Special:FilePath/Bletchley_Park_-_Draco2008.jpg?width=300" ];
 }
 
 function getResourceIdFromLabel(label, endpoint) {
     var query =
         "prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>" + "\n" +
-        "select ?s where { ?s rdfs:label \"" + label + ""\"@en }";
+        "select ?s where { ?s rdfs:label \"" + label + "\"@en }";
     return performQuery(query, endpoint);
 }
 
@@ -26,8 +44,9 @@ function getImageUrlFromId(resourceId) {
     return performQuery(query, endpoint);
 }
 
-function addImage(imageId, imageUrl) {
-    $("body").append("<img id=\"" + imageId + "\" src=\"" + imageUrl + ""\">");
+function addImage(data) {
+    console.log(data);
+    // $("body").append("<img src=\"" + imageUrl + "\">");
 }
 
 // expects locations to be an array, with every location formatted as:
@@ -39,7 +58,14 @@ function getImagesForLocations(locations) {
     }
 }
 
+// location is expected to be a string
+function getImageUrlForLocation(location) {
+    return getImageUrlFromId(getResourceIdFromLabel(location));
+}
 
+// var locations = hardcodedLocations();
+// for (var location in locations) {
+//     addImage("01", getImageUrlForLocation(location));
+// }
 
-// ToDo
-// * Probar inyectando con greasemonkey
+$("body").append("<img src=\"" + performQuery() + "\">");
