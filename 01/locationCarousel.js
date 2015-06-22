@@ -22,8 +22,7 @@ function performQuery(query, callback, endpoint) {
     $.ajax({
 		dataType: "jsonp",
 		url: queryUrl,
-		success: function(_data) {
-            callback(_data);
+		success: callback(_data)
         }
     });
 }
@@ -35,15 +34,18 @@ function addImage(data) {
 
 function getImageUrlFromLocation (location, endpoint) {
     var query =
-        "prefix http://dbpedia.org/ontology/" + "\n" +
-        "prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>" + "\n" +
-        "select ?o where { ?s rdfs:label \"" + location + "\"@en ." + "\n" +
+        "prefix dbpedia-owl: <http://dbpedia.org/ontology/>" + "\n" +
+        "prefix dbpprop: <http://dbpedia.org/property/>" + "\n" +
+        "select ?o where { ?s dbpprop:name \"" + location + "\"@en ." + "\n" +
         "?s dbpedia-owl:thumbnail ?o }";
-    performQuery(query, addImage);
+    performQuery(query, addImage, defaultEndpoint());
 }
 
 
 var locations = hardcodedLocations();
-for (var location in locations) {
-    getImageUrlFromLocation(location);
-}
+// for (var location in locations) {
+//     getImageUrlFromLocation(location);
+// }
+getImageUrlFromLocation(locations[0]);
+getImageUrlFromLocation(locations[1]);
+getImageUrlFromLocation(locations[2]);
