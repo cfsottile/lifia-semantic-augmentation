@@ -5,7 +5,7 @@
 function getBirthAndDeathDates(actor){
 
   var actorName = actor.innerHTML;
-
+  
 	var actorUri;
 	var url = "http://dbpedia.org/sparql";
 	var results = [];
@@ -21,7 +21,7 @@ function getBirthAndDeathDates(actor){
 	$.ajax({
 		dataType: "jsonp",
 		url: queryUrl,
-		success: function(_data) {
+		success: function(_data) {      
 			actorUri = _data.results.bindings[0].s.value;
 
 			query = "\
