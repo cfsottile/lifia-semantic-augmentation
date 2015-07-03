@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title></title>
+
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.2/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script>
+      function hardcodedLocations () {
+        return [
+            "Bletchley Park",
+            "Sherborne School",
+            "Joyce Grove"
+        ];
+      }
+
+      // hardcoding methods - end
+
+      function defaultEndpoint() {
+        return "http://dbpedia.org/sparql";
+      }
+
+      function performQuery(query, callback, endpoint) {
+        // endpoint = endpoint !== undefined ? endpoint : defaultEndpoint();
+        endpoint = endpoint || defaultEndpoint();
+        queryUrl = encodeURI(endpoint + "?query=" + query + "&format=json");
+
+        $.ajax({
+          dataType: "jsonp",
+          url: queryUrl,
+          success: callback
+        });
+
+      }
+
+      function addImage(data) {
+        console.log(data);
+        $("body").append("<img src=\"" + data.results.bindings[0].o.value + "\">");
+      }
+
+      function getImageUrlFromLocation (location, endpoint) {
+        var query =
+            "prefix dbpedia-owl: <http://dbpedia.org/ontology/>" + "\n" +
+            "prefix dbpprop: <http://dbpedia.org/property/>" + "\n" +
+            "select ?o where { ?s dbpprop:name \"" + location + "\"@en ." + "\n" +
+            "?s dbpedia-owl:thumbnail ?o }";
+        performQuery(query, addImage, defaultEndpoint());
+      }
+
+
+      var locations = hardcodedLocations();
+      // for (var location in locations) {
+      //     getImageUrlFromLocation(location);
+      // }
+      getImageUrlFromLocation(locations[0],"http://dbpedia.org/sparql");
+      getImageUrlFromLocation(locations[1], "http://dbpedia.org/sparql");
+      getImageUrlFromLocation(locations[2], "http://dbpedia.org/sparql");
+    </script>
+  </body>
+</html>

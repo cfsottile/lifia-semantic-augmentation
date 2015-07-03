@@ -29,7 +29,7 @@ function performQuery(query, callback, endpoint) {
 
 function addImage(data) {
     console.log(data);
-    // $("body").append("<img src=\"" + imageUrl + "\">");
+    $("body").append("<img src=\"" + data.results.bindings[0].o.value + "\">");
 }
 
 function getImageUrlFromLocation (location, endpoint) {
