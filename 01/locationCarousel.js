@@ -1,14 +1,9 @@
-// hardcoding methods - start
-
 function hardcodedLocations () {
     return [
         "Bletchley Park",
-        "Sherborne School",
-        "Joyce Grove"
+        "Sherborne School"
     ];
 }
-
-// hardcoding methods - end
 
 function defaultEndpoint() {
     return "http://dbpedia.org/sparql";
@@ -23,13 +18,24 @@ function performQuery(query, callback, endpoint) {
 		dataType: "jsonp",
 		url: queryUrl,
 		success: callback
-        }
     });
 }
 
 function addImage(data) {
-    console.log(data);
-    $("body").append("<img src=\"" + data.results.bindings[0].o.value + "\">");
+    // document.getElementById('semantic_augmented_marquee').innerHtml += "<img src=\"" + data.results.bindings[0].o.value + "\">";
+    // $('#semantic_augmented_marquee').add('<img src=\"' + data.results.bindings[0].o.value + '\">');
+    var image = document.createElement('img');
+    image.src = data.results.bindings[0].o.value;
+    // image.className += ''
+    $('#semantic_augmented_image_container').append(image);
+    // document.getElementById('semantic_augmented_image_container').appendChild(image);
+}
+
+function addMarquee () {
+    var imageContainer = '<marquee id="semantic_augmented_image_container" class="article">';
+    imageContainer += '<h2>Location Photos</h2>';
+    imageContainer += '</marquee>';
+    $(imageContainer).insertAfter('#titleCast');
 }
 
 function getImageUrlFromLocation (location, endpoint) {
@@ -41,7 +47,7 @@ function getImageUrlFromLocation (location, endpoint) {
     performQuery(query, addImage, defaultEndpoint());
 }
 
-
+addMarquee();
 var locations = hardcodedLocations();
 // for (var location in locations) {
 //     getImageUrlFromLocation(location);
