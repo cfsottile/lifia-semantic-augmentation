@@ -22,7 +22,7 @@ function performQuery(query, callback, endpoint) {
     $.ajax({
 		dataType: "jsonp",
 		url: queryUrl,
-		success: callback(_data)
+		success: callback
         }
     });
 }
