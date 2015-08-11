@@ -5,6 +5,34 @@ function hardcodedLocations () {
     ];
 }
 
+function getFilmingLocations () {
+
+  var filming_locations = [];
+
+  $.ajax({
+    async: false,
+		dataType: "html",
+		url: (document.URL + 'locations'),
+    success: function(_data){
+
+      //parse the _data into a DOM
+      DP = new DOMParser();
+      doc = DP.parseFromString(_data, 'text/html');
+
+      //get container element
+      locations_containter = doc.getElementById("filming_locations_content");
+
+      //get locations names
+      for each (location_containter in locations_containter.children) {
+        filming_locations.push(location_containter.children[0].children[0].innerHTML.split(',')[0]);
+      }
+
+    }
+  });
+
+  return filming_locations;
+}
+
 function defaultEndpoint() {
     return "http://dbpedia.org/sparql";
 }
@@ -48,10 +76,10 @@ function getImageUrlFromLocation (location, endpoint) {
 }
 
 addMarquee();
-var locations = hardcodedLocations();
-// for (var location in locations) {
-//     getImageUrlFromLocation(location);
-// }
-getImageUrlFromLocation(locations[0]);
-getImageUrlFromLocation(locations[1]);
-getImageUrlFromLocation(locations[2]);
+var locations = getFilmingLocations();
+for each (location in locations) {
+    getImageUrlFromLocation(location);
+}
+// getImageUrlFromLocation(locations[0]);
+// getImageUrlFromLocation(locations[1]);
+// getImageUrlFromLocation(locations[2]);
