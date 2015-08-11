@@ -5,7 +5,7 @@
 function getBirthAndDeathDates(actor){
 
   var actorName = actor.innerHTML;
-  
+
 	var actorUri;
 	var url = "http://dbpedia.org/sparql";
 	var results = [];
@@ -21,14 +21,14 @@ function getBirthAndDeathDates(actor){
 	$.ajax({
 		dataType: "jsonp",
 		url: queryUrl,
-		success: function(_data) {      
+		success: function(_data) {
 			actorUri = _data.results.bindings[0].s.value;
 
 			query = "\
-			prefix dbpedia2: <http://dbpedia.org/property/>\
+			prefix dbo: <http://dbpedia.org/ontology/>\
 			SELECT ?o \
 			WHERE { \
-				<" + actorUri + "> dbpedia2:birthDate ?o }";
+				<" + actorUri + "> dbo:birthDate ?o }";
 			queryUrl = encodeURI(url + "?query=" + query + "&format=json");
 
 			$.ajax({
@@ -39,10 +39,10 @@ function getBirthAndDeathDates(actor){
 						results["birthDate"]=_data.results.bindings[0].o.value;
 					}
 					query = "\
-					prefix dbpedia2: <http://dbpedia.org/property/>\
+					prefix dbo: <http://dbpedia.org/ontology/>\
 					SELECT ?o \
 					WHERE { \
-						<" + actorUri + "> dbpedia2:deathDate ?o }";
+						<" + actorUri + "> dbo:deathDate ?o }";
 
 					queryUrl = encodeURI(url + "?query=" + query + "&format=json");
 
