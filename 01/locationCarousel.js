@@ -12,19 +12,19 @@ function getFilmingLocations () {
   $.ajax({
     async: false,
 		dataType: "html",
-		url: (document.URL + 'locations'),
+		url: ('locations'),
     success: function(_data){
-
       //parse the _data into a DOM
       DP = new DOMParser();
       doc = DP.parseFromString(_data, 'text/html');
 
       //get container element
-      locations_containter = doc.getElementById("filming_locations_content");
+      locations_container = doc.getElementById("filming_locations_content");
 
       //get locations names
-      for each (location_containter in locations_containter.children) {
-        filming_locations.push(location_containter.children[0].children[0].innerHTML.split(',')[0]);
+      var i;
+      for (i = 1; i < locations_container.children.length; i++) {
+        filming_locations.push(locations_container.children[i].children[0].children[0].innerHTML.split(',')[0]);
       }
 
     }
@@ -77,9 +77,7 @@ function getImageUrlFromLocation (location, endpoint) {
 
 addMarquee();
 var locations = getFilmingLocations();
-for each (location in locations) {
-    getImageUrlFromLocation(location);
+var j;
+for (j = 0; j < locations.length; j++) {
+  getImageUrlFromLocation(locations[j]);
 }
-// getImageUrlFromLocation(locations[0]);
-// getImageUrlFromLocation(locations[1]);
-// getImageUrlFromLocation(locations[2]);

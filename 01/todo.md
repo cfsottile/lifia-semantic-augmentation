@@ -1,7 +1,6 @@
 ##ToDo
 
-- Ver por qué carajo no está tirando el `console.log(pija6)` (el que viene después del for each de locations_container).
-
+- Party 😎
 
 //URL de la pagina acutal
 
