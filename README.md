@@ -3,13 +3,6 @@
 #### Idea
 Muestra un carrousel con imágenes que obtiene de Wikipedia (por medio de DBpedia) de los lugares en los que se filmó la película. También pueden ver de utilizar http://wifo5-03.informatik.uni-mannheim.de/flickrwrappr/
 
-#### How to
-###### Datos de entrada
-- Lugares
-
-###### Datos de salida
-- URL de fotos para los lugares
-
 ## Morboso
 Aparece en la lista de actores o en la página de un actor un icono que representa que el actor murió. Y si se pasa el mouse sobre el ícono, el tooltip indica las fechas de nacimiento y muerte lo más específicas posibles.
 
