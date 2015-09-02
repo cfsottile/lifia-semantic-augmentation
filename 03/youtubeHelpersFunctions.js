@@ -1,6 +1,6 @@
-function getYoutubeListIframeFor(query_string, pheight, pwidth) {
+function getYoutubeListIframeFor(iframe_id,query_string, pheight, pwidth) {
 
-  return ('<iframe id="ytplayer"\
+  return ('<iframe id="'+iframe_id+'"\
             type="text/html"\
             width="'+pwidth+'"'+
             'height="'+pheight+'"'+
@@ -8,6 +8,13 @@ function getYoutubeListIframeFor(query_string, pheight, pwidth) {
             'frameborder="0"/>')
 }
 
-function getYoutubeVideoFor() {
+function getYoutubeIframeFor(iframe_id,video_id, pheight, pwidth) {
+
+  return ('<iframe id="'+iframe_id+'"\
+            type="text/html"\
+            width="'+pwidth+'"'+
+            'height="'+pheight+'"'+
+            'src="http://www.youtube.com/embed/'+video_id+'"'+
+            'frameborder="0"/>')
 
 }
