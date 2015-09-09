@@ -13,7 +13,7 @@ On the other hand, IMDb doesn't always has information about the soundtrack, so,
 So:
 
 1. IMDb soundtrack data:
-	2. Check *Soundtrack div* existence.
+	2. Check *Soundtrack div* existence. **DONE**
 	3. Get list of songs with name and performer from url + soundtrack. **DONE**
 	4. Get video ID for song. **DONE**
 	5. Insert url or embedded video of the song in DOM. **DONE**
