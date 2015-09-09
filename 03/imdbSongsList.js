@@ -54,8 +54,8 @@ function imdbSongsList() {
     url: "soundtrack",
     // success: parseDOM()
     success: function (_data) {
-      DP = new DOMParser();
-      doc = DP.parseFromString(_data, 'text/html');
+      var DP = new DOMParser();
+      var doc = DP.parseFromString(_data, 'text/html');
 
       songsContainer = doc.getElementById("soundtracks_content").children[1];
       var i;
@@ -69,5 +69,3 @@ function imdbSongsList() {
 
   return songsList;
 }
-
-imdbSongsList();

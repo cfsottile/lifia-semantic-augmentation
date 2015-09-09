@@ -15,7 +15,8 @@ So:
 1. IMDb soundtrack data:
 	2. Check *Soundtrack div* existence.
 	3. Get list of songs with name and performer from url + soundtrack. **DONE**
-	4. Get song url or embedded video of the song.
-5. DBpedia soundtrack data:
-	6. Get list of music composers from DBpedia.
-	7. Generate youtube link or embedded player for every "composer + movie".
+	4. Get video ID for song. **DONE**
+	5. Insert url or embedded video of the song in DOM. **DONE**
+6. DBpedia soundtrack data:
+	7. Get list of music composers from DBpedia.
+	8. Generate youtube link or embedded player for every "composer + movie".
