@@ -11,7 +11,7 @@ function addImdbSoundtrackSection () {
     }
 
     songsListSection += '</div>';
-    $(songsListSection).insertAfter('#titleCast');
+    $(songsListSection).insertAfter('#titleDidYouKnow');
 }
 
 // function linkOrIframeFor(query) {
@@ -23,4 +23,6 @@ function addImdbSoundtrackSection () {
 //   }
 // }
 
-addImdbSoundtrackSection();
+if (getElementByXpath("//*[@id=\"soundtracks\"]")) {
+  addImdbSoundtrackSection();
+}
