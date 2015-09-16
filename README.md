@@ -1,6 +1,4 @@
 ## Lugar de filmación
-
-#### Idea
 Muestra un carrousel con imágenes que obtiene de Wikipedia (por medio de DBpedia) de los lugares en los que se filmó la película. También pueden ver de utilizar http://wifo5-03.informatik.uni-mannheim.de/flickrwrappr/
 
 ## Morboso
