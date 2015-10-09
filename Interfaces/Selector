@@ -1,0 +1,53 @@
+Selector
+--------
+-elementXpath
+-parseFunction
+--------
+/*
+* @Description: gets and parses setted element
+* @Input: -
+* @Output: parsed element
+*/
++getElement()
+
+/*
+* @Description: gets setted element
+* @Input: -
+* @Output: raw element
+*/
++getRawElement()
+
+/*
+* @Description: gets and parses input element
+* @Input: element Xpath
+* @Output: parsed element
+*/
++getElement(xpath)
+
+/*
+* @Description: gets input element
+* @Input: element Xpath
+* @Output: raw element
+*/
++getRawElement(xpath)
+
+/*
+* @Description: sets element to retrieve
+* @Input: element Xpath
+* @Output: -
+*/
++setElement(xpath)
+
+/*
+* @Description: sets the function used to parse raw elements
+* @Input: callable function
+* @Output: -
+*/
++parseElementWith(funtion(rawElement))
+
+/*
+* @Description: parses raw element given the defined parse function
+* @Input: callable function
+* @Output: parsed element
+*/
+-parseElement(rawElement)
