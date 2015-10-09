@@ -47,7 +47,7 @@ Selector
 
 /*
 * @Description: parses raw element given the defined parse function
-* @Input: callable function
+* @Input: raw element
 * @Output: parsed element
 */
 -parseElement(rawElement)
