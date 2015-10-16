@@ -22,7 +22,7 @@ Definimos un principio de interfaz para el objeto *Selector*. Planteamos los mé
 
 ### ¿Cómo se vería una augmentación?
 
-En un principio, yo había pensado algo así como subclasificar Augmentation para una página en particuar, definiendo en el initialize la *configuración* de los objetos.
+En un principio, yo había pensado algo así como subclasificar Augmentation para una página en particular, definiendo en el initialize la *configuración* de los objetos.
 
 ```ruby
 # Ejemplo para la augmentation de locations de IMDb
@@ -45,7 +45,8 @@ aug = Augmentation.new(
 	SelectorUrl.new(
 		SELECTOR_MODE_BETWEEN,
 		["imdb.com/title/", "/locations"],
-		parse_function),
+		parse_function
+	),
 	[
 		Getter.new(
 
@@ -53,7 +54,7 @@ aug = Augmentation.new(
 		Getter.new(
 
 		)
-	]
+	],
 	Builder.new(
 	
 	),
