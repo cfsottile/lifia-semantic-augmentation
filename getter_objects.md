@@ -25,6 +25,7 @@ Surge una duda en la augmentation de *Morbo*: si bien tenemos una sola función 
 
 # Pensamientos finales
 Vemos que hay tres tipos bien definidos de objetos *getter*. Cada uno tiene ciertas características.
+
 * DomParser
   * Conoce (los datos que serán iguales para todas las *invocaciones* del objeto):
     * Una parte de la URL; la parte fija
