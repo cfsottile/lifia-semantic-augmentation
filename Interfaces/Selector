@@ -1,53 +1,56 @@
-Selector
+abstract class Selector
 --------
--elementXpath
--parseFunction
+private elementXpath
+private parseFunction
 --------
-/*
-* @Description: gets and parses setted element
-* @Input: -
-* @Output: parsed element
-*/
-+getElement()
-
-/*
-* @Description: gets setted element
-* @Input: -
-* @Output: raw element
-*/
-+getRawElement()
-
-/*
-* @Description: gets and parses input element
-* @Input: element Xpath
-* @Output: parsed element
-*/
-+getElement(xpath)
-
-/*
-* @Description: gets input element
-* @Input: element Xpath
-* @Output: raw element
-*/
-+getRawElement(xpath)
 
 /*
 * @Description: sets element to retrieve
 * @Input: element Xpath
 * @Output: -
 */
-+setElement(xpath)
+public function setElement(xpath)
 
 /*
 * @Description: sets the function used to parse raw elements
 * @Input: callable function
 * @Output: -
 */
-+parseElementWith(funtion(rawElement))
+public function setParser(function parseFunction)
 
 /*
 * @Description: parses raw element given the defined parse function
 * @Input: raw element
 * @Output: parsed element
 */
--parseElement(rawElement)
+private function parseElement(rawElement)
+
+/*
+* @Description: gets and parses setted element
+* @Input: -
+* @Output: parsed element
+*/
+public function getElement()
+
+/*
+* @Description: gets setted element
+* @Input: -
+* @Output: raw element
+*/
+public function getRawElement()
+
+/*
+* @Description: gets and parses input element
+* @Input: element Xpath
+* @Output: parsed element
+*/
+public function getElement(xpath)
+
+/*
+* @Description: gets input element
+* @Input: element Xpath
+* @Output: raw element
+*/
+public function getRawElement(xpath)
+
+--------------------------------------------------------------------------------

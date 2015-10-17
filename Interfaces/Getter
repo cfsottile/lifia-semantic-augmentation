@@ -1,0 +1,120 @@
+abstract class Getter
+---------------------
+---------------------
+
+abstract public function setBase(base)
+
+abstract public function setParser(parser)
+
+abstract public function run(args)
+
+abstract public function getRaw(args)
+
+/*
+--------------------------------------------------------------------------------
+*/
+
+class webAPIGetter < Getter
+
+/*
+*
+*
+*/
+public function setAPIBase(url)
+
+/*
+*
+*
+*/
+public function setAPIMethod(string)
+
+/*
+*
+*
+*/
+public function setParser(function parseFunction)
+
+/*
+*
+*
+*/
+public function run(method, args)
+
+/*
+*
+*
+*/
+public function run(args)
+
+/*
+*
+*
+*/
+public function getRaw(args)
+
+/*
+--------------------------------------------------------------------------------
+*/
+
+class DomParserGetter < Getter
+
+/*
+*
+*
+*/
+public function setUrlBase(string[] urlBase)
+
+/*
+*
+*
+*/
+public function setParser(function parserFunction)
+
+/*
+*
+*
+*/
+public function run(string[] urlArgs)
+
+/*
+*
+*
+*/
+public function getRaw(args)
+
+/*
+--------------------------------------------------------------------------------
+*/
+
+class SemanticQuerierGetter < Getter
+
+
+/*
+*
+*
+*/
+public function setEndpoint(string endpoint)
+
+/*
+*
+*
+*/
+public function setSPARQLQuery(string[] queryBase)
+
+/*
+*
+*
+*/
+public function setParser(function parserFunction)
+
+/*
+*
+*
+*/
+public function run(string[] queryArgs)
+
+/*
+*
+*
+*/
+public function getRaw(args)
