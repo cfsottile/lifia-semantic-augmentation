@@ -3,4 +3,4 @@ El objeto **selector** fue dividido en dos objetos: el **extractor** y el **sele
 
 Por el momento, ya que no se analizó en profundidad la clase **Builder** y la posible explosión de su jerarquía, la misma será instanciada recibiendo un string que determinará el comportamiento que adoptará la instancia, de forma que sea transparente al usuario.
 
-Nos inclinamos por el enfoque de "caja negra", en el que, al momento de instanciar una augmentation, se le pasan como argumento los objetos que deberá utilizar. La clase augmentation sabe cómo *enchufar* y hacer uso de dichos objetos.
+Nos inclinamos por el enfoque de "caja negra", en el que, al momento de instanciar una augmentation, se pasan como argumento los objetos que deberá utilizar. La clase augmentation sabe cómo *enchufar* y hacer uso de dichos objetos.
