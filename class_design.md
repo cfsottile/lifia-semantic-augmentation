@@ -1,6 +1,6 @@
-# Clases
+# Clases y responsabilidades
 * Augmentation
-* Selector
+* Selector: retorna elemento/s del DOM.
 * Extractor
 * Getter
 	* SemanticGetter
@@ -21,12 +21,14 @@ En este caso, las iteraciones deberían estar en la Augmentation, quedando el si
 Obtención de los ~~elementos~~ datos a *augmentar* mediante un **selector**. Estos elementos vendrán en forma de colección. Iteración sobre cada elemento de la colección. Según la forma en que deba culminar la augmentation (N augmentations distintas o una que integre a todos los elementos augmentados), la iteración incluiría el `run` del **builder** o no lo haría. Es decir, en caso de que cada augmentation se inserte en el documento independientemente de las demás, cada iteración ejecutaría el `run` de **injector**, ya que hay una modificación del documento para cada elemento a augmentar; en caso de que las augmentations sean agregadas a un elemento que luego será insertado de forma única, la iteración debería ocuparse de darle datos al buider, y el `run` del **builder** y de **injector** quedaría fuera de la misma, ya que se ejecutarían una sola vez.
 
 Ejemplo augmentation culmina en N augmentations 
+
 ```javascript
 data = extractor.run();
 data.forEach(d => injector.run(builder.run(getter.run(d))));
 ```
 
 Ejemplo augmentation culmina en 1 augmentation
+
 ```javascript
 data = extractor.run();
 data.forEach(d => builder.add(getter.run(d)));
@@ -37,6 +39,7 @@ injector.run(builder.run());
 Aquí la lógica de las iteraciones se incluiría en los objetos. **extractor** los datos usando un **selector**, y para cada dato enviaría un mensaje `run` a **getter**, que, según la culminación de la augmentation (N o 1), deberá correr el injector junto con el builder N veces o agregar los datos augmentados N veces para luego correr el injector junto con el builder una sola vez.
 
 Ejemplo
+
 ```
 class Extractor {
 	run() {
@@ -94,7 +97,7 @@ class Injector {
 Tenemos diferentes formas de obtener elementos del DOM:
 
 * Xpath
-* JQuery
+* JQuery (CSS Selectors)
 * Código javascript
 
 A priori tendremos una sola clase **Selector** que se instanciará con:
