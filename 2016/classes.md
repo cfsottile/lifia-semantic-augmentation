@@ -23,6 +23,11 @@
 
 * **Extractor** could work with 1 to N elements. We could abstract from this by always treating  element returned by selector as a collection.
 * Should **Queries** be called from within the **Getter**, or should them be called from outside, as **Selectors** are? For now, we'll give that responsibility to the **Getter**.
+* N to N **Builders** could separate its steps in a) construct the main HTML element, and b) construct the individual HTML elements and add them to the main one. This would require to set two functions to **Builders**, instead of one: the one to construct the main element, and the one to construct the individual ones. For now, we decided to keep it simple and just insert all the logic into one function.
+* Tenemos dos posibilidades de augmentation: NaN y Na1. El Getter siempre retorna una collection.
+![](./nan_na1.jpg)
+	* *NaN*: el builder recibe un dato, y, mediante una function que le es seteada, genera un elemento HTML en el que incluye este dato. Se hace un map de la collection retornada por el getter en el que se invoca al builder. Con la nueva collection, se hace un each y se invoca al injector.
+	* *Na1*: el builder debe conocer dos funciones: una para generar el elemento HTML main, y otra para cada dato particular. Recibe la collection retornada por el getter y para cada elemento invoca a la función individual. Retorna un elemento HTML con todos los datos, el cual es pasado al injector.
 
 # Protocols
 
@@ -41,3 +46,6 @@
 * **Getter**:
 	* *setQuery(query)*: setter for a query object.
 	* *run(items)*: maps every item in items to the result of performing the query with it. Returns the resulting collection.
+* **Builder**:
+	* *setBuilderFunction(function)*: setter for the builder function, which MUST take some data as argument. If it is an NtoN builder, it will receive a single element; if it is an Nto1 builder, it will receive a collection.
+	* *run(data)*: maps every single data in data to the result of invoking the builder function with it. Returns the resulting collection.
