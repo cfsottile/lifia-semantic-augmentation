@@ -8,8 +8,8 @@
 	* *Needs*: a way to deal with the elements; i.e., a function.
 * **Query**:
 	* *Responsibility*: performs a query over the Internet and gets a set of raw data.
-	* *Needs*: the target of the query, e.g. the semantic endpoint or a website, and the query itself, e.g. the SPARQL query or the function to get some element from the document. 
-* **Getter**: 
+	* *Needs*: the target of the query, e.g. the semantic endpoint or a website, and the query itself, e.g. the SPARQL query or the function to get some element from the document.
+* **Getter**:
 	* *Responsibility*: takes a collection of items and a query object, and launches it with every item, taking then the raw data returned by it and processing it, extracting the relevant information.
 	* *Needs*: a way to process the data; i.e., a function.
 * **Builder**:
@@ -28,7 +28,8 @@
 ![](./nan_na1.jpg)
 	* *NaN*: el builder recibe un dato, y, mediante una function que le es seteada, genera un elemento HTML en el que incluye este dato. Se hace un map de la collection retornada por el getter en el que se invoca al builder. Con la nueva collection, se hace un each y se invoca al injector.
 	* *Na1*: el builder debe conocer dos funciones: una para generar el elemento HTML main, y otra para cada dato particular. Recibe la collection retornada por el getter y para cada elemento invoca a la función individual. Retorna un elemento HTML con todos los datos, el cual es pasado al injector.
-
+	* *Na1-bis*: el builder conoce solo una funcion, la cual se encarga de armar el elemento completo. Este builder recibiria la collection retornada por los getter y trabajaria con dicha informacion de la manera que lo disponga la funcion, retornando un elemento HTML para insertar con un injector. Este enfoque da gran libertad para generar elementos HTML pero pone mucha responsabilidad en dicha funcion ya que debe accederse constante y deliberadamente a la collection de informacion, por lo que se debe saber o al menos suponer que contendrá.  
+*	Definir la libertad que le dariamos al desarrollador/usuario en cuanto a la Augmentation, si deberiamos desarrollarla como una cosa solo configurable o si estaria mas abierta, como permitiendo redefiniciones de metodos o incluso que esto sea necesario; que el usuario deba definir como se conectan y comportan las cosas vs que la conexion entre los objetos ya este definida y el usuario deba configurarlos; configuracion en aug vs configuracion en obj.
 # Protocols
 
 * **Selector**:
@@ -49,3 +50,6 @@
 * **Builder**:
 	* *setBuilderFunction(function)*: setter for the builder function, which MUST take some data as argument. If it is an NtoN builder, it will receive a single element; if it is an Nto1 builder, it will receive a collection.
 	* *run(data)*: maps every single data in data to the result of invoking the builder function with it. Returns the resulting collection.
+* **Injector**:
+	* *insertAfter(DOMElement,)*
+	*
