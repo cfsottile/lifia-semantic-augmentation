@@ -1,11 +1,11 @@
 class Augmentation {
   constructor(selector, extractor, getter, builder, injector) {
     this.augmentationWrappers = [];
-    this.extractionSelector=selector;
-    this.extractor=extractor;
-    this.getter=getter;
-    this.builder=builder;
-    this.injector=injector;
+    this.extractionSelector = selector;
+    this.extractor = extractor;
+    this.getter = getter;
+    // this.builder = builder;
+    // this.injector = injector;
   }
 
   setExtractionSelector (selector) {
@@ -34,8 +34,9 @@ class Augmentation {
 
   run () {
     this.select();
-    //this.extract();
-    //this.get();
+    this.extract();
+    this.get();
+    return augmentationWrappers.getGotten();
     //this.build();
     //this.inject();
   }
@@ -81,13 +82,13 @@ class Endpoint {
   }
 }
 class Extractor {
-  constructor () {
-    this.parserFunction;
+  constructor (parserFunction) {
+    this.parserFunction = parserFunction;
   }
 
-  setParserFunction (fn) {
-    this.parserFunction = fn;
-  }
+  // setParserFunction (fn) {
+  //   this.parserFunction = fn;
+  // }
 
   run (augmentationWrappers) {
     augmentationWrappers.forEach(e => {
@@ -96,18 +97,18 @@ class Extractor {
   }
 }
 class Getter {
-  constructor () {
-    this.parserFunction;
-    this.query;
-  }
-
-  setParserFunction (fn) {
-    this.parserFunction = fn;
-  }
-
-  setQuery (query) {
+  constructor (parserFunction, query) {
+    this.parserFunction = parserFunction;
     this.query = query;
   }
+
+  // setParserFunction (fn) {
+  //   this.parserFunction = fn;
+  // }
+
+  // setQuery (query) {
+  //   this.query = query;
+  // }
 
   run (augmentationWrappers) {
     augmentationWrappers.forEach(e => {
@@ -116,18 +117,18 @@ class Getter {
   }
 }
 class Query {
-  constructor () {
-    this.endpoint;
-    this.queryStrings;
-  }
-
-  set endpoint (endpoint) {
+  constructor (endpoint, queryString) {
     this.endpoint = endpoint;
-  }
-
-  set queryStrings (queryStrings) {
     this.queryStrings = queryStrings;
   }
+
+  // setEndpoint (endpoint) {
+  //   this.endpoint = endpoint;
+  // }
+
+  // setQueryStrings (queryStrings) {
+  //   this.queryStrings = queryStrings;
+  // }
 
   execute (args) {
     var data;
@@ -154,14 +155,14 @@ class Query {
   }
 }
 class Selector {
-  constructor () {
-    this.parserFunction;
+  constructor (parserFunction) {
+    this.parserFunction = parserFunction;
     this.dom;
   }
 
-  setParserFunction (fn) {
-    this.parserFunction = fn;
-  }
+  // setParserFunction (fn) {
+  //   this.parserFunction = fn;
+  // }
 
   run (augmentationWrappers) {
     this.parserFunction().forEach(e => {
@@ -171,12 +172,51 @@ class Selector {
     });
   }
 }
-var aug = new Augmentation(
-  null,
-  null,
-  null,
-  null,
-  null
+var doc;
+$.ajax({
+  async: false,
+  dataType: "html",
+  url: ("http://www.imdb.com/title/tt2084970/locations"),
+  success: function(_data){
+    //parse the _data into a DOM
+    DP = new DOMParser();
+    doc = DP.parseFromString(_data, 'text/html');
+  }
+});
+
+var extractionSelector = new Selector(() => {
+  return doc.getElementById("filming_locations_content").children;
+});
+
+var extractor = new Extractor(
+  function(location_container) {
+    return location_container.children[0].children[0].innerHTML.split(',')[0];
+  }
+);
+
+var query = new Query(
+  new Endpoint(),
+  [
+    "prefix dbpedia-owl: <http://dbpedia.org/ontology/>" + "\n" +
+      "prefix dbpprop: <http://dbpedia.org/property/>" + "\n" +
+      "select ?o where { ?s dbpprop:name \"",
+    "\"@en ." + "\n" + "?s dbpedia-owl:thumbnail ?o }"
+  ]
+);
+
+var getter = new Getter(
+  function(data) {
+    var results = {};
+    results["thumbnail"] = data.results.bindings[0].o.value;
+    return results;
+  },
+  query
 )
 
-console.log(aug)
+var aug = new Augmentation(
+  extractionSelector,
+  extractor,
+  getter
+);
+
+console.log(aug.run());

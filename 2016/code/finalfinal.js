@@ -12,8 +12,8 @@ var Augmentation = function () {
     this.extractionSelector = selector;
     this.extractor = extractor;
     this.getter = getter;
-    this.builder = builder;
-    this.injector = injector;
+    // this.builder = builder;
+    // this.injector = injector;
   }
 
   _createClass(Augmentation, [{
@@ -50,8 +50,9 @@ var Augmentation = function () {
     key: "run",
     value: function run() {
       this.select();
-      //this.extract();
-      //this.get();
+      this.extract();
+      this.get();
+      return augmentationWrappers.getGotten();
       //this.build();
       //this.inject();
     }
@@ -122,18 +123,17 @@ var Endpoint = function () {
 }();
 
 var Extractor = function () {
-  function Extractor() {
+  function Extractor(parserFunction) {
     _classCallCheck(this, Extractor);
 
-    this.parserFunction;
+    this.parserFunction = parserFunction;
   }
 
+  // setParserFunction (fn) {
+  //   this.parserFunction = fn;
+  // }
+
   _createClass(Extractor, [{
-    key: "setParserFunction",
-    value: function setParserFunction(fn) {
-      this.parserFunction = fn;
-    }
-  }, {
     key: "run",
     value: function run(augmentationWrappers) {
       var _this = this;
@@ -148,24 +148,22 @@ var Extractor = function () {
 }();
 
 var Getter = function () {
-  function Getter() {
+  function Getter(parserFunction, query) {
     _classCallCheck(this, Getter);
 
-    this.parserFunction;
-    this.query;
+    this.parserFunction = parserFunction;
+    this.query = query;
   }
 
+  // setParserFunction (fn) {
+  //   this.parserFunction = fn;
+  // }
+
+  // setQuery (query) {
+  //   this.query = query;
+  // }
+
   _createClass(Getter, [{
-    key: "setParserFunction",
-    value: function setParserFunction(fn) {
-      this.parserFunction = fn;
-    }
-  }, {
-    key: "setQuery",
-    value: function setQuery(query) {
-      this.query = query;
-    }
-  }, {
     key: "run",
     value: function run(augmentationWrappers) {
       var _this2 = this;
@@ -180,12 +178,20 @@ var Getter = function () {
 }();
 
 var Query = function () {
-  function Query() {
+  function Query(endpoint, queryString) {
     _classCallCheck(this, Query);
 
-    this.endpoint;
-    this.queryStrings;
+    this.endpoint = endpoint;
+    this.queryStrings = queryStrings;
   }
+
+  // setEndpoint (endpoint) {
+  //   this.endpoint = endpoint;
+  // }
+
+  // setQueryStrings (queryStrings) {
+  //   this.queryStrings = queryStrings;
+  // }
 
   _createClass(Query, [{
     key: "execute",
@@ -213,35 +219,24 @@ var Query = function () {
       });
       return builtQuery;
     }
-  }, {
-    key: "endpoint",
-    set: function set(endpoint) {
-      this.endpoint = endpoint;
-    }
-  }, {
-    key: "queryStrings",
-    set: function set(queryStrings) {
-      this.queryStrings = queryStrings;
-    }
   }]);
 
   return Query;
 }();
 
 var Selector = function () {
-  function Selector() {
+  function Selector(parserFunction) {
     _classCallCheck(this, Selector);
 
-    this.parserFunction;
+    this.parserFunction = parserFunction;
     this.dom;
   }
 
+  // setParserFunction (fn) {
+  //   this.parserFunction = fn;
+  // }
+
   _createClass(Selector, [{
-    key: "setParserFunction",
-    value: function setParserFunction(fn) {
-      this.parserFunction = fn;
-    }
-  }, {
     key: "run",
     value: function run(augmentationWrappers) {
       this.parserFunction().forEach(function (e) {
@@ -255,7 +250,35 @@ var Selector = function () {
   return Selector;
 }();
 
-var aug = new Augmentation(null, null, null, null, null);
+var doc;
+$.ajax({
+  async: false,
+  dataType: "html",
+  url: "http://www.imdb.com/title/tt2084970/locations",
+  success: function success(_data) {
+    //parse the _data into a DOM
+    DP = new DOMParser();
+    doc = DP.parseFromString(_data, 'text/html');
+  }
+});
 
-console.log(aug);
+var extractionSelector = new Selector(function () {
+  return doc.getElementById("filming_locations_content").children;
+});
+
+var extractor = new Extractor(function (location_container) {
+  return location_container.children[0].children[0].innerHTML.split(',')[0];
+});
+
+var query = new Query(new Endpoint(), ["prefix dbpedia-owl: <http://dbpedia.org/ontology/>" + "\n" + "prefix dbpprop: <http://dbpedia.org/property/>" + "\n" + "select ?o where { ?s dbpprop:name \"", "\"@en ." + "\n" + "?s dbpedia-owl:thumbnail ?o }"]);
+
+var getter = new Getter(function (data) {
+  var results = {};
+  results["thumbnail"] = data.results.bindings[0].o.value;
+  return results;
+}, query);
+
+var aug = new Augmentation(extractionSelector, extractor, getter);
+
+console.log(aug.run());
 

@@ -10,13 +10,13 @@ $.ajax({
   }
 });
 
-var extractionSelector = new Selector( => {
+var extractionSelector = new Selector(() => {
   return doc.getElementById("filming_locations_content").children;
 });
 
 var extractor = new Extractor(
   function(location_container) {
-    return location_container.children[0].children[0].innerHTML.split(',')[0]);
+    return location_container.children[0].children[0].innerHTML.split(',')[0];
   }
 );
 
@@ -42,7 +42,7 @@ var getter = new Getter(
 var aug = new Augmentation(
   extractionSelector,
   extractor,
-  getter,
+  getter
 );
 
 console.log(aug.run());
