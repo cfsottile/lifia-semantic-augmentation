@@ -14,7 +14,7 @@ class Getter {
 
   run (augmentationWrappers) {
     augmentationWrappers.forEach(e => {
-      e.setGotten(this.parserFunction(query.execute(e.getExtracted())));
+      e.setGotten(this.parserFunction(this.query.execute(e.getExtracted())));
     });
   }
 }

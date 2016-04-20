@@ -21,22 +21,23 @@ class Augmentation {
   }
 
   select () {
-    extractionSelector.run(augmentationWrappers);
+    extractionSelector.run(this.augmentationWrappers);
   }
 
   extract () {
-    extractor.run(augmentationWrappers);
+    extractor.run(this.augmentationWrappers);
   }
 
   get () {
-    getter.run(augmentationWrappers);
+    getter.run(this.augmentationWrappers);
   }
 
   run () {
     this.select();
     this.extract();
     this.get();
-    return augmentationWrappers.getGotten();
+    debugger;
+    return this.augmentationWrappers;
     //this.build();
     //this.inject();
   }

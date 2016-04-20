@@ -34,17 +34,17 @@ var Augmentation = function () {
   }, {
     key: "select",
     value: function select() {
-      extractionSelector.run(augmentationWrappers);
+      extractionSelector.run(this.augmentationWrappers);
     }
   }, {
     key: "extract",
     value: function extract() {
-      extractor.run(augmentationWrappers);
+      extractor.run(this.augmentationWrappers);
     }
   }, {
     key: "get",
     value: function get() {
-      getter.run(augmentationWrappers);
+      getter.run(this.augmentationWrappers);
     }
   }, {
     key: "run",
@@ -52,7 +52,8 @@ var Augmentation = function () {
       this.select();
       this.extract();
       this.get();
-      return augmentationWrappers.getGotten();
+      debugger;
+      return this.augmentationWrappers;
       //this.build();
       //this.inject();
     }
@@ -115,7 +116,7 @@ var Endpoint = function () {
   _createClass(Endpoint, [{
     key: "buildURI",
     value: function buildURI(query) {
-      return encodeURI(endpoint + "?query=" + query + "&format=json");
+      return encodeURI(this.endpoint + "?query=" + query + "&format=json");
     }
   }]);
 
@@ -169,7 +170,7 @@ var Getter = function () {
       var _this2 = this;
 
       augmentationWrappers.forEach(function (e) {
-        e.setGotten(_this2.parserFunction(query.execute(e.getExtracted())));
+        e.setGotten(_this2.parserFunction(_this2.query.execute(e.getExtracted())));
       });
     }
   }]);
@@ -178,7 +179,7 @@ var Getter = function () {
 }();
 
 var Query = function () {
-  function Query(endpoint, queryString) {
+  function Query(endpoint, queryStrings) {
     _classCallCheck(this, Query);
 
     this.endpoint = endpoint;
@@ -196,27 +197,34 @@ var Query = function () {
   _createClass(Query, [{
     key: "execute",
     value: function execute(args) {
-      var data;
-      $.ajax({
-        async: false,
-        dataType: "jsonp",
-        url: endpoint.buildURI(this.buildQuery(args)),
-        success: function success(_data) {
-          data = _data;
-        }
-      });
-      return data;
+      var response = request("GET", this.endpoint.buildURI(this.buildQuery(args)));
+      return JSON.parse(response.getBody('utf8'));
+      //
+      // var data;
+      // $.ajax({
+      //   async: false,
+      //   dataType: "jsonp",
+      //   url: endpoint.buildURI(this.buildQuery(args)),
+      //   success: function(_data) {
+      //     data = _data;
+      //   }
+      // });
+      // return data;
     }
   }, {
     key: "buildQuery",
     value: function buildQuery(args) {
-      builtQuery = "";
+      var builtQuery = "";
       // nasty hack
-      args.push("");
-      queryStrings.forEach(e, function (i) {
-        builtQuery.concat(e);
-        builtQuery.concat(args[i]);
-      });
+      // args.push("");
+      // this.queryStrings.forEach((e, i) => {
+      // builtQuery = builtQuery.concat(e);
+      // builtQuery = builtQuery.concat(args);
+      // })
+
+      builtQuery = builtQuery.concat(this.queryStrings[0]);
+      builtQuery = builtQuery.concat(args);
+      builtQuery = builtQuery.concat(this.queryStrings[1]);
       return builtQuery;
     }
   }]);
@@ -249,21 +257,34 @@ var Selector = function () {
 
   return Selector;
 }();
+// var $ = require('jquery')
 
-var doc;
-$.ajax({
-  async: false,
-  dataType: "html",
-  url: "http://www.imdb.com/title/tt2084970/locations",
-  success: function success(_data) {
-    //parse the _data into a DOM
-    DP = new DOMParser();
-    doc = DP.parseFromString(_data, 'text/html');
-  }
-});
+
+var fs = require("fs");
+var jsdom = require("jsdom");
+var request = require("sync-request");
+
+// var doc;
+// $.ajax({
+//   async: false,
+//   dataType: "html",
+//   url: ("http://www.imdb.com/title/tt2084970/locations"),
+//   success: function(_data){
+//     //parse the _data into a DOM
+//     DP = new DOMParser();
+//     doc = DP.parseFromString(_data, 'text/html');
+//   }
+// });
+
+// var doc = jsdom.jsdom(fs.readFileSync("./locations.html"))
+var doc = jsdom.jsdom(request("GET", "http://www.imdb.com/title/tt2084970/locations").getBody());
 
 var extractionSelector = new Selector(function () {
-  return doc.getElementById("filming_locations_content").children;
+  // in order to get a proper array, I have to do this
+  var elements = doc.getElementById("filming_locations_content").children;
+  var arr = [].slice.call(elements);
+  arr.splice(0, 1);
+  return arr;
 });
 
 var extractor = new Extractor(function (location_container) {
@@ -274,7 +295,9 @@ var query = new Query(new Endpoint(), ["prefix dbpedia-owl: <http://dbpedia.org/
 
 var getter = new Getter(function (data) {
   var results = {};
-  results["thumbnail"] = data.results.bindings[0].o.value;
+  if (data.results.bindings.length > 0) {
+    results["thumbnail"] = data.results.bindings[0].o.value;
+  }
   return results;
 }, query);
 

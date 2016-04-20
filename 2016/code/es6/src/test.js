@@ -1,17 +1,29 @@
-var doc;
-$.ajax({
-  async: false,
-  dataType: "html",
-  url: ("http://www.imdb.com/title/tt2084970/locations"),
-  success: function(_data){
-    //parse the _data into a DOM
-    DP = new DOMParser();
-    doc = DP.parseFromString(_data, 'text/html');
-  }
-});
+// var $ = require('jquery')
+var fs = require("fs");
+var jsdom = require("jsdom");
+var request = require("sync-request")
+
+// var doc;
+// $.ajax({
+//   async: false,
+//   dataType: "html",
+//   url: ("http://www.imdb.com/title/tt2084970/locations"),
+//   success: function(_data){
+//     //parse the _data into a DOM
+//     DP = new DOMParser();
+//     doc = DP.parseFromString(_data, 'text/html');
+//   }
+// });
+
+// var doc = jsdom.jsdom(fs.readFileSync("./locations.html"))
+var doc = jsdom.jsdom(request("GET", "http://www.imdb.com/title/tt2084970/locations").getBody())
 
 var extractionSelector = new Selector(() => {
-  return doc.getElementById("filming_locations_content").children;
+  // in order to get a proper array, I have to do this
+  var elements = doc.getElementById("filming_locations_content").children;
+  var arr = [].slice.call(elements)
+  arr.splice(0, 1)
+  return arr;
 });
 
 var extractor = new Extractor(
@@ -33,7 +45,9 @@ var query = new Query(
 var getter = new Getter(
   function(data) {
     var results = {};
-    results["thumbnail"] = data.results.bindings[0].o.value;
+    if (data.results.bindings.length > 0) {
+      results["thumbnail"] = data.results.bindings[0].o.value;
+    }
     return results;
   },
   query

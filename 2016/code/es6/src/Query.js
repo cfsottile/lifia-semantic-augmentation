@@ -1,5 +1,5 @@
 class Query {
-  constructor (endpoint, queryString) {
+  constructor (endpoint, queryStrings) {
     this.endpoint = endpoint;
     this.queryStrings = queryStrings;
   }
@@ -13,26 +13,33 @@ class Query {
   // }
 
   execute (args) {
-    var data;
-    $.ajax({
-      async: false,
-      dataType: "jsonp",
-      url: endpoint.buildURI(this.buildQuery(args)),
-      success: function(_data) {
-        data = _data;
-      }
-    });
-    return data;
+    var response = request("GET", this.endpoint.buildURI(this.buildQuery(args)));
+    return JSON.parse(response.getBody('utf8'));
+    //
+    // var data;
+    // $.ajax({
+    //   async: false,
+    //   dataType: "jsonp",
+    //   url: endpoint.buildURI(this.buildQuery(args)),
+    //   success: function(_data) {
+    //     data = _data;
+    //   }
+    // });
+    // return data;
   }
 
   buildQuery(args) {
-    builtQuery = "";
+    var builtQuery = "";
     // nasty hack
-    args.push("");
-    queryStrings.forEach(e, i => {
-      builtQuery.concat(e);
-      builtQuery.concat(args[i]);
-    })
+    // args.push("");
+    // this.queryStrings.forEach((e, i) => {
+      // builtQuery = builtQuery.concat(e);
+      // builtQuery = builtQuery.concat(args);
+    // })
+
+    builtQuery = builtQuery.concat(this.queryStrings[0]);
+    builtQuery = builtQuery.concat(args);
+    builtQuery = builtQuery.concat(this.queryStrings[1]);
     return builtQuery;
   }
 }

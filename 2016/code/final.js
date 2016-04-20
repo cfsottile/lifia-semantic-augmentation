@@ -21,22 +21,23 @@ class Augmentation {
   }
 
   select () {
-    extractionSelector.run(augmentationWrappers);
+    extractionSelector.run(this.augmentationWrappers);
   }
 
   extract () {
-    extractor.run(augmentationWrappers);
+    extractor.run(this.augmentationWrappers);
   }
 
   get () {
-    getter.run(augmentationWrappers);
+    getter.run(this.augmentationWrappers);
   }
 
   run () {
     this.select();
     this.extract();
     this.get();
-    return augmentationWrappers.getGotten();
+    debugger;
+    return this.augmentationWrappers;
     //this.build();
     //this.inject();
   }
@@ -78,7 +79,7 @@ class Endpoint {
   }
 
   buildURI (query) {
-    return encodeURI(endpoint + "?query=" + query + "&format=json");
+    return encodeURI(this.endpoint + "?query=" + query + "&format=json");
   }
 }
 class Extractor {
@@ -112,12 +113,12 @@ class Getter {
 
   run (augmentationWrappers) {
     augmentationWrappers.forEach(e => {
-      e.setGotten(this.parserFunction(query.execute(e.getExtracted())));
+      e.setGotten(this.parserFunction(this.query.execute(e.getExtracted())));
     });
   }
 }
 class Query {
-  constructor (endpoint, queryString) {
+  constructor (endpoint, queryStrings) {
     this.endpoint = endpoint;
     this.queryStrings = queryStrings;
   }
@@ -131,26 +132,33 @@ class Query {
   // }
 
   execute (args) {
-    var data;
-    $.ajax({
-      async: false,
-      dataType: "jsonp",
-      url: endpoint.buildURI(this.buildQuery(args)),
-      success: function(_data) {
-        data = _data;
-      }
-    });
-    return data;
+    var response = request("GET", this.endpoint.buildURI(this.buildQuery(args)));
+    return JSON.parse(response.getBody('utf8'));
+    //
+    // var data;
+    // $.ajax({
+    //   async: false,
+    //   dataType: "jsonp",
+    //   url: endpoint.buildURI(this.buildQuery(args)),
+    //   success: function(_data) {
+    //     data = _data;
+    //   }
+    // });
+    // return data;
   }
 
   buildQuery(args) {
-    builtQuery = "";
+    var builtQuery = "";
     // nasty hack
-    args.push("");
-    queryStrings.forEach(e, i => {
-      builtQuery.concat(e);
-      builtQuery.concat(args[i]);
-    })
+    // args.push("");
+    // this.queryStrings.forEach((e, i) => {
+      // builtQuery = builtQuery.concat(e);
+      // builtQuery = builtQuery.concat(args);
+    // })
+
+    builtQuery = builtQuery.concat(this.queryStrings[0]);
+    builtQuery = builtQuery.concat(args);
+    builtQuery = builtQuery.concat(this.queryStrings[1]);
     return builtQuery;
   }
 }
@@ -172,20 +180,32 @@ class Selector {
     });
   }
 }
-var doc;
-$.ajax({
-  async: false,
-  dataType: "html",
-  url: ("http://www.imdb.com/title/tt2084970/locations"),
-  success: function(_data){
-    //parse the _data into a DOM
-    DP = new DOMParser();
-    doc = DP.parseFromString(_data, 'text/html');
-  }
-});
+// var $ = require('jquery')
+var fs = require("fs");
+var jsdom = require("jsdom");
+var request = require("sync-request")
+
+// var doc;
+// $.ajax({
+//   async: false,
+//   dataType: "html",
+//   url: ("http://www.imdb.com/title/tt2084970/locations"),
+//   success: function(_data){
+//     //parse the _data into a DOM
+//     DP = new DOMParser();
+//     doc = DP.parseFromString(_data, 'text/html');
+//   }
+// });
+
+// var doc = jsdom.jsdom(fs.readFileSync("./locations.html"))
+var doc = jsdom.jsdom(request("GET", "http://www.imdb.com/title/tt2084970/locations").getBody())
 
 var extractionSelector = new Selector(() => {
-  return doc.getElementById("filming_locations_content").children;
+  // in order to get a proper array, I have to do this
+  var elements = doc.getElementById("filming_locations_content").children;
+  var arr = [].slice.call(elements)
+  arr.splice(0, 1)
+  return arr;
 });
 
 var extractor = new Extractor(
@@ -207,7 +227,9 @@ var query = new Query(
 var getter = new Getter(
   function(data) {
     var results = {};
-    results["thumbnail"] = data.results.bindings[0].o.value;
+    if (data.results.bindings.length > 0) {
+      results["thumbnail"] = data.results.bindings[0].o.value;
+    }
     return results;
   },
   query

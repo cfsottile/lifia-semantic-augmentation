@@ -4,6 +4,6 @@ class Endpoint {
   }
 
   buildURI (query) {
-    return encodeURI(endpoint + "?query=" + query + "&format=json");
+    return encodeURI(this.endpoint + "?query=" + query + "&format=json");
   }
 }
