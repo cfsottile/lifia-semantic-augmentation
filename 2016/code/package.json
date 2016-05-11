@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "jsdom": "^8.4.0",
-    "sync-request": "^3.0.0"
+    "sync-request": "^3.0.0",
+    "xmldom": "^0.1.22"
   }
 }

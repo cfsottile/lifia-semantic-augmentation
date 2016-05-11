@@ -4,7 +4,7 @@ class Augmentation {
     this.extractionSelector = selector;
     this.extractor = extractor;
     this.getter = getter;
-    // this.builder = builder;
+    this.builder = builder;
     // this.injector = injector;
   }
 
@@ -32,10 +32,15 @@ class Augmentation {
     getter.run(this.augmentationWrappers);
   }
 
+  build () {
+    builder.run(this.augmentationWrappers);
+  }
+
   run () {
     this.select();
     this.extract();
     this.get();
+    this.build();
     debugger;
     return this.augmentationWrappers;
     //this.build();

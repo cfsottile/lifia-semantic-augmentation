@@ -17,6 +17,10 @@ class AugmentationWrapper {
     this.gotten = object;
   }
 
+  setBuilt (object) {
+    this.built = object;
+  }
+
   getSelected () {
     return this.selected;
   }
@@ -27,5 +31,9 @@ class AugmentationWrapper {
 
   getGotten () {
     return this.gotten;
+  }
+
+  getBuilt () {
+    return this.built;
   }
 }

@@ -12,7 +12,7 @@ var Augmentation = function () {
     this.extractionSelector = selector;
     this.extractor = extractor;
     this.getter = getter;
-    // this.builder = builder;
+    this.builder = builder;
     // this.injector = injector;
   }
 
@@ -47,11 +47,17 @@ var Augmentation = function () {
       getter.run(this.augmentationWrappers);
     }
   }, {
+    key: "build",
+    value: function build() {
+      builder.run(this.augmentationWrappers);
+    }
+  }, {
     key: "run",
     value: function run() {
       this.select();
       this.extract();
       this.get();
+      this.build();
       debugger;
       return this.augmentationWrappers;
       //this.build();
@@ -87,6 +93,11 @@ var AugmentationWrapper = function () {
       this.gotten = object;
     }
   }, {
+    key: "setBuilt",
+    value: function setBuilt(object) {
+      this.built = object;
+    }
+  }, {
     key: "getSelected",
     value: function getSelected() {
       return this.selected;
@@ -101,9 +112,56 @@ var AugmentationWrapper = function () {
     value: function getGotten() {
       return this.gotten;
     }
+  }, {
+    key: "getBuilt",
+    value: function getBuilt() {
+      return this.built;
+    }
   }]);
 
   return AugmentationWrapper;
+}();
+// For now, only N to N
+
+
+var Builder = function () {
+  function Builder(htmlString) {
+    _classCallCheck(this, Builder);
+
+    this.htmlString = htmlString;
+  }
+
+  _createClass(Builder, [{
+    key: "run",
+    value: function run(augmentationWrappers) {
+      var _this = this;
+
+      var itemTemplate = this.getItemTemplate();
+      augmentationWrappers.forEach(function (aw) {
+        aw.setBuilt(_this.fulfillItemTemplate(itemTemplate, aw));
+      });
+    }
+  }, {
+    key: "getItemTemplate",
+    value: function getItemTemplate() {
+      var DOMParser = require("xmldom").DOMParser;
+      var htmlNode = new DOMParser().parseFromString(this.htmlString);
+      return htmlNode.getElementById("itemTemplate");
+    }
+  }, {
+    key: "fulfillItemTemplate",
+    value: function fulfillItemTemplate(itemTemplate, aw) {
+      var gotten = aw.getGotten();
+      var itemStr = itemTemplate.cloneNode(true).toString();
+      var toFulfill = itemStr.match(/{{(.*?)}}/g);
+      toFulfill.forEach(function (e, i, a) {
+        itemStr = itemStr.replace(e, gotten[e.slice(2, e.length - 2)]);
+      });
+      return itemStr;
+    }
+  }]);
+
+  return Builder;
 }();
 
 var Endpoint = function () {
@@ -137,10 +195,10 @@ var Extractor = function () {
   _createClass(Extractor, [{
     key: "run",
     value: function run(augmentationWrappers) {
-      var _this = this;
+      var _this2 = this;
 
       augmentationWrappers.forEach(function (e) {
-        e.setExtracted(_this.parserFunction(e.getSelected()));
+        e.setExtracted(_this2.parserFunction(e.getSelected()));
       });
     }
   }]);
@@ -167,10 +225,10 @@ var Getter = function () {
   _createClass(Getter, [{
     key: "run",
     value: function run(augmentationWrappers) {
-      var _this2 = this;
+      var _this3 = this;
 
       augmentationWrappers.forEach(function (e) {
-        e.setGotten(_this2.parserFunction(_this2.query.execute(e.getExtracted())));
+        e.setGotten(_this3.parserFunction(_this3.query.execute(e.getExtracted())));
       });
     }
   }]);
@@ -300,6 +358,14 @@ var getter = new Getter(function (data) {
   }
   return results;
 }, query);
+
+var builder = new Builder('<div id="container">\
+    <div id="itemTemplate">\
+      <p>\
+        {{thumbnail}}\
+      </p>\
+    </div>\
+  </div>');
 
 var aug = new Augmentation(extractionSelector, extractor, getter);
 

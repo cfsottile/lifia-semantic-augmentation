@@ -51,7 +51,17 @@ var getter = new Getter(
     return results;
   },
   query
-)
+);
+
+var builder = new Builder(
+  '<div id="container">\
+    <div id="itemTemplate">\
+      <p>\
+        {{thumbnail}}\
+      </p>\
+    </div>\
+  </div>'
+);
 
 var aug = new Augmentation(
   extractionSelector,
