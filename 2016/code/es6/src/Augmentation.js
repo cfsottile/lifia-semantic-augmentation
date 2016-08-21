@@ -40,9 +40,9 @@ class Augmentation {
     this.select();
     this.extract();
     this.get();
-    this.build();
+    var built = this.build();
     debugger;
-    return this.augmentationWrappers;
+    return built;
     //this.build();
     //this.inject();
   }

@@ -57,9 +57,9 @@ var Augmentation = function () {
       this.select();
       this.extract();
       this.get();
-      this.build();
+      var built = this.build();
       debugger;
-      return this.augmentationWrappers;
+      return built;
       //this.build();
       //this.inject();
     }
@@ -121,25 +121,92 @@ var AugmentationWrapper = function () {
 
   return AugmentationWrapper;
 }();
-// For now, only N to N
 
-
-var Builder = function () {
-  function Builder(htmlString) {
-    _classCallCheck(this, Builder);
+var BuilderNto1 = function () {
+  function BuilderNto1(htmlString) {
+    _classCallCheck(this, BuilderNto1);
 
     this.htmlString = htmlString;
   }
 
-  _createClass(Builder, [{
+  _createClass(BuilderNto1, [{
     key: "run",
     value: function run(augmentationWrappers) {
       var _this = this;
 
+      var finalHtml = this.createFinalHtml();
+      var itemTemplate = finalHtml.getElementById("itemTemplate");
+      // this.prepareFinalHtml(finalHtml);
+      augmentationWrappers.forEach(function (aw) {
+        _this.addFulfilledItemToFinalHtml(_this.fulfillItemTemplate(itemTemplate, aw), finalHtml);
+        // debugger;
+      });
+      this.removeItemTemplateFromFinalHtml(finalHtml);
+      return finalHtml;
+    }
+  }, {
+    key: "createFinalHtml",
+    value: function createFinalHtml() {
+      var DOMParser = require("xmldom").DOMParser;
+      return new DOMParser().parseFromString(this.htmlString);
+    }
+
+    // prepareFinalHtml() {
+    //   finalHtml.
+    // }
+
+  }, {
+    key: "fulfillItemTemplate",
+    value: function fulfillItemTemplate(itemTemplate, aw) {
+      var gotten = aw.getGotten();
+      var item = itemTemplate.cloneNode(true);
+      // debugger;
+      item.setAttribute("id", "item");
+      var itemStr = item.toString();
+      var toFulfill = itemStr.match(/{{(.*?)}}/g);
+      toFulfill.forEach(function (e, i, a) {
+        itemStr = itemStr.replace(e, gotten[e.slice(2, e.length - 2)]);
+      });
+      var DOMParser = require("xmldom").DOMParser;
+      var itemNode = new DOMParser().parseFromString(itemStr).firstChild;
+      // debugger;
+      return itemNode;
+    }
+  }, {
+    key: "addFulfilledItemToFinalHtml",
+    value: function addFulfilledItemToFinalHtml(fulfilledItem, finalHtml) {
+      finalHtml.getElementById("itemTemplate").parentNode.appendChild(fulfilledItem);
+    }
+  }, {
+    key: "removeItemTemplateFromFinalHtml",
+    value: function removeItemTemplateFromFinalHtml(finalHtml) {
+      finalHtml.removeChild(finalHtml.getElementById("itemTemplate"));
+    }
+  }]);
+
+  return BuilderNto1;
+}();
+// For now, only N to N
+
+
+var BuilderNtoN = function () {
+  function BuilderNtoN(htmlString) {
+    _classCallCheck(this, BuilderNtoN);
+
+    this.htmlString = htmlString;
+  }
+
+  _createClass(BuilderNtoN, [{
+    key: "run",
+    value: function run(augmentationWrappers) {
+      var _this2 = this;
+
       var itemTemplate = this.getItemTemplate();
       augmentationWrappers.forEach(function (aw) {
-        aw.setBuilt(_this.fulfillItemTemplate(itemTemplate, aw));
+        aw.setBuilt(_this2.fulfillItemTemplate(itemTemplate, aw));
       });
+      // for testing purposes
+      return augmentationWrappers;
     }
   }, {
     key: "getItemTemplate",
@@ -161,7 +228,7 @@ var Builder = function () {
     }
   }]);
 
-  return Builder;
+  return BuilderNtoN;
 }();
 
 var Endpoint = function () {
@@ -195,10 +262,10 @@ var Extractor = function () {
   _createClass(Extractor, [{
     key: "run",
     value: function run(augmentationWrappers) {
-      var _this2 = this;
+      var _this3 = this;
 
       augmentationWrappers.forEach(function (e) {
-        e.setExtracted(_this2.parserFunction(e.getSelected()));
+        e.setExtracted(_this3.parserFunction(e.getSelected()));
       });
     }
   }]);
@@ -225,10 +292,10 @@ var Getter = function () {
   _createClass(Getter, [{
     key: "run",
     value: function run(augmentationWrappers) {
-      var _this3 = this;
+      var _this4 = this;
 
       augmentationWrappers.forEach(function (e) {
-        e.setGotten(_this3.parserFunction(_this3.query.execute(e.getExtracted())));
+        e.setGotten(_this4.parserFunction(_this4.query.execute(e.getExtracted())));
       });
     }
   }]);
@@ -359,7 +426,7 @@ var getter = new Getter(function (data) {
   return results;
 }, query);
 
-var builder = new Builder('<div id="container">\
+var builder = new BuilderNto1('<div id="container">\
     <div id="itemTemplate">\
       <p>\
         {{thumbnail}}\
@@ -367,7 +434,7 @@ var builder = new Builder('<div id="container">\
     </div>\
   </div>');
 
-var aug = new Augmentation(extractionSelector, extractor, getter);
+var aug = new Augmentation(extractionSelector, extractor, getter, builder);
 
 console.log(aug.run());
 

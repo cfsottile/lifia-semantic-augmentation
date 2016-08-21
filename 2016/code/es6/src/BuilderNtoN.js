@@ -1,5 +1,5 @@
 // For now, only N to N
-class Builder {
+class BuilderNtoN {
   constructor (htmlString) {
     this.htmlString = htmlString;
   }
@@ -10,6 +10,8 @@ class Builder {
       aw.setBuilt(
         this.fulfillItemTemplate(itemTemplate, aw));
     });
+    // for testing purposes
+    return augmentationWrappers;
   }
 
   getItemTemplate() {

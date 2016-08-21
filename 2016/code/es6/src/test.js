@@ -53,7 +53,7 @@ var getter = new Getter(
   query
 );
 
-var builder = new Builder(
+var builder = new BuilderNto1(
   '<div id="container">\
     <div id="itemTemplate">\
       <p>\
@@ -66,7 +66,8 @@ var builder = new Builder(
 var aug = new Augmentation(
   extractionSelector,
   extractor,
-  getter
+  getter,
+  builder
 );
 
 console.log(aug.run());
