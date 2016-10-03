@@ -17,6 +17,7 @@ var request = require("sync-request")
 
 // var doc = jsdom.jsdom(fs.readFileSync("./locations.html"))
 var doc = jsdom.jsdom(request("GET", "http://www.imdb.com/title/tt2084970/locations").getBody())
+// var doc = jsdom.jsdom(request("GET", "http://www.imdb.com/title/tt0247586/locations").getBody())
 
 var extractionSelector = new Selector(() => {
   // in order to get a proper array, I have to do this
@@ -63,11 +64,22 @@ var builder = new BuilderNto1(
   </div>'
 );
 
+var injector = new InjectorNto1(
+  null,
+  function(aw, doc) {
+    return doc.documentElement;
+  },
+  function(node, built) {
+    node.insertBefore(built, node.firstChild);
+    debugger;
+  });
+
 var aug = new Augmentation(
   extractionSelector,
   extractor,
   getter,
-  builder
+  builder,
+  injector
 );
 
 console.log(aug.run());

@@ -5,7 +5,8 @@ class Augmentation {
     this.extractor = extractor;
     this.getter = getter;
     this.builder = builder;
-    // this.injector = injector;
+    this.injector = injector;
+    this.built = null;
   }
 
   setExtractionSelector (selector) {
@@ -33,17 +34,18 @@ class Augmentation {
   }
 
   build () {
-    builder.run(this.augmentationWrappers);
+    return builder.run(this.augmentationWrappers);
+  }
+
+  inject () {
+    injector.run(this.augmentationWrappers, this.built, this.built)
   }
 
   run () {
     this.select();
     this.extract();
     this.get();
-    var built = this.build();
-    debugger;
-    return built;
-    //this.build();
-    //this.inject();
+    this.built = this.build();
+    this.inject();
   }
 }

@@ -1,4 +1,3 @@
-// For now, only N to N
 class BuilderNtoN {
   constructor (htmlString) {
     this.htmlString = htmlString;
